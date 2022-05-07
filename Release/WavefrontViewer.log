@@ -1,0 +1,112 @@
+﻿  Extern.cpp
+  main.cpp
+c:\users\user\desktop\vertexinspector\main.cpp(50): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\user\desktop\vertexinspector\main.cpp(57): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(62): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(67): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(72): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(87): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\user\desktop\vertexinspector\main.cpp(88): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(97): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\user\desktop\vertexinspector\main.cpp(98): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(108): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\user\desktop\vertexinspector\main.cpp(109): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(118): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\user\desktop\vertexinspector\main.cpp(119): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(126): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\user\desktop\vertexinspector\main.cpp(131): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\user\desktop\vertexinspector\main.cpp(208): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(223): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(248): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(249): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(250): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(279): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\user\desktop\vertexinspector\main.cpp(290): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+c:\users\user\desktop\vertexinspector\main.cpp(282): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(283): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(284): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(285): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(286): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(287): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(288): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\main.cpp(289): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Utils.cpp
+c:\users\user\desktop\vertexinspector\utils.cpp(31): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+  VectorUtilities.cpp
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(65): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(66): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(67): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(82): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(84): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(85): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(86): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(115): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(130): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(151): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(171): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(193): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(199): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(201): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(207): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(213): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(224): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(225): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(230): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(258): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(271): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(275): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(277): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(282): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(287): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(321): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(329): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(330): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(549): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(570): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(594): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(595): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(596): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(597): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(598): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(612): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(618): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(624): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(629): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(649): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(654): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(664): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(669): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(677): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(696): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(697): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(698): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(700): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(701): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(702): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(704): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(705): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(706): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(709): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(710): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(711): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(713): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(714): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(715): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(717): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(718): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\vectorutilities.cpp(719): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  WavefrontObj.cpp
+c:\users\user\desktop\vertexinspector\wavefrontobj.cpp(83): warning C4018: '<=': signed/unsigned mismatch
+c:\users\user\desktop\vertexinspector\wavefrontobj.cpp(114): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\wavefrontobj.cpp(115): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\wavefrontobj.cpp(136): warning C4018: '<=': signed/unsigned mismatch
+c:\users\user\desktop\vertexinspector\wavefrontobj.cpp(167): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\wavefrontobj.cpp(168): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\wavefrontobj.cpp(169): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\desktop\vertexinspector\wavefrontobj.cpp(297): warning C4018: '<': signed/unsigned mismatch
+c:\users\user\desktop\vertexinspector\wavefrontobj.cpp(531): warning C4018: '<': signed/unsigned mismatch
+  Generating code
+  All 281 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  WavefrontViewer.vcxproj -> C:\Users\User\Desktop\VertexInspector\Release\WaveFrontViewer.exe
