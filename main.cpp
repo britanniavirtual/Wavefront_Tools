@@ -2,12 +2,19 @@
 
 #pragma comment(lib, "glew32.lib")
 
-const int width = 1024, height = 1024;
+const string MESH_FILE = "uvsphere.obj";
+const bool SHOW_NORMALS = true;
+const float NORMAL_WIDTH = 1;
+const float NORMAL_LENGTH = 0.1;
+const float POINT_SIZE = 10;
+const int WIDTH = 1024;
+const int HEIGHT = 1024;
 const int GRID_SIZE = 5;
-const float timeStep =  1/60.0f;
+const float TIME_STEP =  1/60.0f;
+const bool SHOW_GRID = true;
 
 float currentTime = 0;
-double accumulator = timeStep;
+double accumulator = TIME_STEP;
 int selected_index = -1;
 
 int oldX = 0;
@@ -21,9 +28,12 @@ GLint viewport[4];
 GLdouble MV[16];
 GLdouble P[16];
 
-glm::vec3 Up=glm::vec3(0,1,0), Right, viewDir;
+glm::vec3 Up(0, 1, 0);
+glm::vec3 Right(0, 1, 0);
+glm::vec3 viewDir(0, 1, 0);
 
-LARGE_INTEGER frequency;//Ticks per second
+
+LARGE_INTEGER frequency;
 LARGE_INTEGER t1, t2;
 double frameTimeQP = 0;
 float frameTime = 0;
@@ -32,7 +42,6 @@ float fps = 0;
 int totalFrames = 0;
 char info[MAX_PATH] = {0};
 
-void drawCube(float x, float y, float z);
 
 float angle;
 float lx = 1;
@@ -42,14 +51,38 @@ float xx = 3;
 float yy = 3;
 float zz = 3;
 
+//Forward declarations
+void drawCube(float x, float y, float z);
+//
+
+void drawNormals(Vector3D start, Vector3D end)
+{
+	glLineWidth(NORMAL_WIDTH);
+
+	for (int a = 0; a < objWireframeMesh.indicesCount; a += 3)
+	{
+		int i1 = objWireframeMesh.indices[a];
+		int i2 = objWireframeMesh.indices[a + 1];
+		int i3 = objWireframeMesh.indices[a + 2];
+
+		Vector3D faceNorm(objWireframeMesh.normals[a].x, objWireframeMesh.normals[a].y, objWireframeMesh.normals[a].z);
+		faceNorm = vector3DUtils.setVectorMagnitude(faceNorm, NORMAL_LENGTH);
+
+		Vector3D centroid((objWireframeMesh.vertices[i1].x + objWireframeMesh.vertices[i2].x + objWireframeMesh.vertices[i3].x) / 3, (objWireframeMesh.vertices[i1].y + objWireframeMesh.vertices[i2].y + objWireframeMesh.vertices[i3].y) / 3, (objWireframeMesh.vertices[i1].z + objWireframeMesh.vertices[i2].z + objWireframeMesh.vertices[i3].z) / 3);
+
+		glBegin(GL_LINES);
+		//glVertex3f(objWireframeMesh.vertices[i1].x, objWireframeMesh.vertices[i1].y, objWireframeMesh.vertices[i1].z);
+		glVertex3f(centroid.x, centroid.y, centroid.z);
+		glVertex3f(centroid.x + faceNorm.x, centroid.y + faceNorm.y, centroid.z + faceNorm.z);
+		glEnd();
+	}
+	glLineWidth(1);
+}
+
 void processSpecialKeys(int key, int x, int y)
 {
-	float fraction = 0.1f;
-
 	float m_yaw = 0;// *0.017;
 	float m_moveCommand = 0.1;
-
-	Vector3D m_moveCommand2(0.0f, 0.0f, 0.0f);
 
 	switch (key)
 	{
@@ -82,7 +115,6 @@ void keyDown(unsigned char key, int x, int y)
 	
 	if (key == 'w')
 	{
-		float fraction = 0.1f;
 		float m_yaw = 0;// *0.017;
 		float m_moveCommand = 0.1;
 		m_yaw = rY * 0.017;
@@ -92,7 +124,6 @@ void keyDown(unsigned char key, int x, int y)
 
 	if (key == 's')
 	{
-		float fraction = 0.1f;
 		float m_yaw = 0;// *0.017;
 		float m_moveCommand = 0.1;
 		m_yaw = rY * 0.017;
@@ -103,7 +134,6 @@ void keyDown(unsigned char key, int x, int y)
 
 	if (key == 'a')
 	{
-		float fraction = 0.1f;
 		float m_yaw = 0;// *0.017;
 		float m_moveCommand = 0.1;
 		m_yaw = (rY - 90) * 0.017;
@@ -113,7 +143,6 @@ void keyDown(unsigned char key, int x, int y)
 
 	if (key == 'd')
 	{
-		float fraction = 0.1f;
 		float m_yaw = 0;// *0.017;
 		float m_moveCommand = 0.1;
 		m_yaw = (rY + 90) * 0.017;
@@ -133,19 +162,19 @@ void keyDown(unsigned char key, int x, int y)
 }
 
 
-void OnMouseDown(int button, int s, int x, int y)
+void onMouseDown(int button, int s, int x, int y)
 {
 	if (s == GLUT_DOWN)
 	{
 		oldX = x;
 		oldY = y;
-		int window_y = (height - y);
-		float norm_y = float(window_y)/float(height/2.0);
+		int window_y = (HEIGHT - y);
+		float norm_y = float(window_y)/float(HEIGHT/2.0);
 		int window_x = x ;
-		float norm_x = float(window_x)/float(width/2.0);
+		float norm_x = float(window_x)/float(WIDTH/2.0);
 
 		float winZ=0;
-		glReadPixels( x, height-y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ );
+		glReadPixels( x, HEIGHT-y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ );
 		if(winZ==1)
 			winZ=0;
 		double objX=0, objY=0, objZ=0;
@@ -165,7 +194,7 @@ void OnMouseDown(int button, int s, int x, int y)
 	}
 }
 
-void OnMouseMove(int x, int y)
+void onMouseMove(int x, int y)
 {
 	if(selected_index == -1)
 	{
@@ -194,7 +223,7 @@ void OnMouseMove(int x, int y)
 	glutPostRedisplay();
 }
 
-void DrawMeshVertexRef()
+void drawMeshVertexRef()
 {
 	//Draw vertex point references
 	glColor3f(1, 0, 0);
@@ -211,7 +240,7 @@ void DrawMeshVertexRef()
 }
 
 //Draw loaded obj shape file
-void DrawWavefrontGeoPoints()
+void drawWavefrontGeoPoints()
 {
 	glBegin(GL_POINTS);
 	glColor3f(1.0f, 1.0f, 1.0f);
@@ -227,7 +256,7 @@ void DrawWavefrontGeoPoints()
 }
 
 //Draw loaded obj shape file
-void DrawWavefrontGeo()
+void drawWavefrontGeo()
 {
 	glBegin(GL_TRIANGLES);
 	glColor3f(0.0f, 1.0f, 0.0f);
@@ -350,7 +379,7 @@ void drawCube(float x, float y, float z)
 }
 
 
-void DrawGrid()
+void drawGrid()
 {
 	glBegin(GL_LINES);
 	glColor3f(0.5f, 0.5f, 0.5f);
@@ -364,7 +393,7 @@ void DrawGrid()
 	glEnd();
 }
 
-void InitGL()
+void initGL()
 {
 	startTime = (float)glutGet(GLUT_ELAPSED_TIME);
 	currentTime = startTime;
@@ -378,12 +407,12 @@ void InitGL()
 	glEnable(GL_DEPTH_TEST);
 	
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//GL_FILL or GL_LINE
-	glPointSize(10);
+	glPointSize(POINT_SIZE);
 
 	wglSwapIntervalEXT(0);
 }
 
-void OnReshape(int nw, int nh)
+void onReshape(int nw, int nh)
 {
 	glViewport(0, 0, nw, nh);
 	glMatrixMode(GL_PROJECTION);
@@ -409,7 +438,7 @@ void OnReshape(int nw, int nh)
 
 
 
-void OnRender()
+void onRender()
 {
 	float fraction = 0.1f;
 
@@ -471,50 +500,58 @@ void OnRender()
 
 
 	//[Draw world grid]
-	DrawGrid();
+
+	if (SHOW_GRID)
+	{
+		drawGrid();
+	}
+
+	if (SHOW_NORMALS)
+	{
+		drawNormals(Vector3D(0, 0, 0), Vector3D(0, 0, 0));
+	}
 
 	//[Draw wavefront geometry]
-	DrawWavefrontGeoPoints();
-	DrawWavefrontGeo();
+	drawWavefrontGeoPoints();
+	drawWavefrontGeo();
 
-	DrawMeshVertexRef();
+	drawMeshVertexRef();
 
 	//glEnd();
 	glutSwapBuffers();
 }
 
-void OnShutdown()
+void onShutdown()
 {
 }
 
 
-void OnIdle()
+void onIdle()
 {
 	glutPostRedisplay();
 }
 
 
-
 void main(int argc, char** argv)
 {
-	objWireframeMesh.loadObj("IcoSphere.obj");
+	objWireframeMesh.loadObj(MESH_FILE);
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	glutInitWindowSize(width, height);
+	glutInitWindowSize(WIDTH, HEIGHT);
 	glutCreateWindow("Wavefront Viewer");
 
-	glutDisplayFunc(OnRender);
-	glutReshapeFunc(OnReshape);//Window resize event
-	glutIdleFunc(OnIdle);
-	glutMouseFunc(OnMouseDown);
-	glutMotionFunc(OnMouseMove);
+	glutDisplayFunc(onRender);
+	glutReshapeFunc(onReshape);//Window resize event
+	glutIdleFunc(onIdle);
+	glutMouseFunc(onMouseDown);
+	glutMotionFunc(onMouseMove);
 	glutKeyboardFunc(keyDown);
 	glutSpecialFunc(processSpecialKeys);
-	glutCloseFunc(OnShutdown);
+	glutCloseFunc(onShutdown);
 
 	glewInit();
-	InitGL();//<-- Wireframe mode set
+	initGL();//<-- Wireframe mode set
 
 	glutMainLoop();
 }

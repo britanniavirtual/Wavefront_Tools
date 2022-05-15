@@ -1,5 +1,6 @@
 #pragma once
 
+
 /////////////////////////////////////////////////////////////////////////
 // Self-contained 3D vector class.Utility functions in ::Vector3DUtils
 /////////////////////////////////////////////////////////////////////////
@@ -120,7 +121,7 @@ public:
 
 
 /////////////////////////////////////////////////////////////////////////
-// Vector Utilties
+// Vector Utilties (Compact version)
 /////////////////////////////////////////////////////////////////////////
 class Vector3DUtils
 {
@@ -135,62 +136,12 @@ public:
 	//Dot product
 	double dot(Vector3D input1, const Vector3D& input2);
 
-	//Vector plane intersect
-	Vector3D intersectPoint(Vector3D rayVector, Vector3D rayPoint, Vector3D planeNormal, Vector3D planePoint);
-
-	//Get arbitrary 3d vector that is perpendicular to the parameter vector	
-	//There are infinite such vectors, return one such.
-	Vector3D arbitraryOrthogonal(Vector3D vec);
-
-	//Use spherical coordinates to get a position
-	Vector3D OrbitalPosition(float angle1, float angle2, Vector3D centroid);
-
 	//Set the length (magnitude) of a given vector
 	Vector3D setVectorMagnitude(Vector3D input, float newMag);
 
 	//Get magnitude of vector
 	double length(Vector3D vec);
 
-	//Linear interpolation
-	Vector3D lerp(Vector3D a, Vector3D b, float scale);
-
-	//Move vector a towards b by a set amount
-	Vector3D displaceVectorTowards(Vector3D a, Vector3D b, float amount);
-
-	//Scalar difference between two 3D vectors
-	float angularDifference(Vector3D a, Vector3D b);
-
 	Vector3D normalize(Vector3D vec);
-
-	bool RayTriangleIntersect(Vector3D rayOrigin, Vector3D rayVector, Vector3D* v1, Vector3D* v2, Vector3D* v3, Vector3D& outIntersectionPoint);
-
-	bool LineTriangleIntersect(Vector3D lineStart, Vector3D lineEnd, Vector3D v1, Vector3D v2, Vector3D v3, Vector3D* outIntersectionPoint);
-
-	bool vectorPointsTowards(Vector3D centroid, Vector3D a, Vector3D b);//Return if two vectors point towards or away
-
-	Vector3D closestPlanePoint(Vector3D pointPosition, Vector3D planePosition, Vector3D planeNormal);
-
-	Vector3D getTriangleNormal(Vector3D A, Vector3D B, Vector3D C);
-
-	float trianglePointDist(Vector3D v1, Vector3D v2, Vector3D v3, Vector3D point);
-
-	float triangleTriangleDistance(float IntersectPointA[3], float IntersectPointB[3], Vector3D pA1, Vector3D pA2, Vector3D pA3, Vector3D pB1, Vector3D pB2, Vector3D pB3);//Minimum distance between two triangles;
-
-	Vector3D closestTrianglePoint(const Vector3D *triangle, const Vector3D &position);
-
-	float pointDistanceToTriangle(Vector3D pointPosition, Vector3D A, Vector3D B, Vector3D C);
-
-private:
-
-	//[For triangle - triangle distance]
-	void VmV(float Vr[3], const float V1[3], const float V2[3]);
-	float VdotV(const float V1[3], const float V2[3]);
-	void VcV(float Vr[3], const float V[3]);
-	void VpV(float Vr[3], const float V1[3], const float V2[3]);
-	void VpVxS(float Vr[3], const float V1[3], const float V2[3], float s);
-	void VcrossV(float Vr[3], const float V1[3], const float V2[3]);
-	void VxS(float Vr[3], const float V[3], float s);
-	float VdistV2(const float V1[3], const float V2[3]);
-	void MxVpV(float Vr[3], const float M1[3][3], const float V1[3], const float V2[3]);
-	void SegPoints(float VEC[3], float X[3], float Y[3], const float P[3], const float A[3], const float Q[3], const float B[3]);
 };
+

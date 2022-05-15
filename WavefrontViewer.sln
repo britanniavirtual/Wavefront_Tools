@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1433
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WaveFrontViewer", "WavefrontViewer.vcxproj", "{98451911-9FB5-477E-ABE5-686EAACF06AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{98451911-9FB5-477E-ABE5-686EAACF06AA}.Debug|x86.ActiveCfg = Debug|Win32
+		{98451911-9FB5-477E-ABE5-686EAACF06AA}.Debug|x86.Build.0 = Debug|Win32
+		{98451911-9FB5-477E-ABE5-686EAACF06AA}.Release|x86.ActiveCfg = Release|Win32
+		{98451911-9FB5-477E-ABE5-686EAACF06AA}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1F519291-4EAC-41C5-A34A-98C15FB08F17}
+	EndGlobalSection
+EndGlobal
