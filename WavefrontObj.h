@@ -26,6 +26,7 @@ public:
 	float y;
 };
 
+
 class WavefrontObj
 {
 public:
@@ -154,4 +155,20 @@ public:
 
 	void loadObj(string FileName);
 	void loadQuadObj(string FileName);
+};
+
+
+class WavefrontUtils
+{
+public:
+	void expandMesh(WavefrontObj *obj, float amount);
+
+private:
+	void computeVertexGroups(WavefrontObj *obj);
+	void computeAverageNormals(WavefrontObj *obj);
+
+	int matching[16384][16];
+	int matchingCount[16384];
+	int foundCount = 0;
+	Vector3D averages[16384];//Computed Average for unique vertex
 };

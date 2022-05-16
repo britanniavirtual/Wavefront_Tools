@@ -111,7 +111,7 @@ void computeVertexGroups()
 	}
 }
 
-void computeAverageNormals()
+void comptueNormalAverages()
 {
 	computeVertexGroups();
 
@@ -244,20 +244,6 @@ Vector3D computeCentroid()
 	centroid.z = avgZ / n;
 
 	return centroid;
-}
-
-
-void meshExpand(float amount)
-{
-	for (int a = 0; a < objWireframeMesh.vertexCount; a++)
-	{
-		Vector3D expand(averages[a].x,  averages[a].y, averages[a].z);
-		expand = vector3DUtils.setVectorMagnitude(expand, amount);
-
-		objWireframeMesh.vertices[a].x += expand.x;
-		objWireframeMesh.vertices[a].y += expand.y;
-		objWireframeMesh.vertices[a].z += expand.z;
-	}
 }
 
 
@@ -775,8 +761,10 @@ void onIdle()
 void main(int argc, char** argv)
 {
 	objWireframeMesh.loadObj(MESH_FILE);
-	computeAverageNormals();
-	//meshExpand(0.5);//Expand loaded mesh outwards along the average normals similar to Blender's solidify modifier
+
+	comptueNormalAverages();
+
+	//wavefrontUtils.expandMesh(&objWireframeMesh, 2);
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);

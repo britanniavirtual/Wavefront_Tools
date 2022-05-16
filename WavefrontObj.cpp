@@ -1,5 +1,166 @@
 #include "JointHeader.h"
 
+void WavefrontUtils::expandMesh(WavefrontObj *obj, float amount)
+{
+	computeAverageNormals(obj);
+
+	for (int a = 0; a < obj->vertexCount; a++)
+	{
+		Vector3D expand(averages[a].x, averages[a].y, averages[a].z);
+		expand = vector3DUtils.setVectorMagnitude(expand, amount);
+
+		obj->vertices[a].x += expand.x;
+		obj->vertices[a].y += expand.y;
+		obj->vertices[a].z += expand.z;
+	}
+}
+
+//Triangles are defined by three unique points for simplicity of rendering (I.e. in DirectX) (No points shared between polys)
+//Get the matching point arrays.
+void WavefrontUtils::computeVertexGroups(WavefrontObj * obj)
+{
+	//vector <int> iterated;//Dont add duplicates
+
+	for (int a = 0; a < obj->vertexCount; a++)//For every vertex
+	{
+		Vector3D curVertex1(obj->vertices[a].x, obj->vertices[a].y, obj->vertices[a].z);
+
+		bool foundA = false;
+		for (int b = 0; b < obj->vertexCount; b++)//Find matching
+		{
+			bool found = false;
+			//if (b == a) { continue; }
+			Vector3D curVertex2(obj->vertices[b].x, obj->vertices[b].y, obj->vertices[b].z);
+
+			if (curVertex1.x == curVertex2.x && curVertex1.y == curVertex2.y && curVertex1.z == curVertex2.z)
+			{
+				found = true;
+			}
+
+			/*
+			bool found2 = false;
+
+			for (int c = 0; c < iterated.size(); c++)
+			{
+				if (iterated[c] == b)
+				{
+					found2 = true;
+					break;
+				}
+			}
+			*/
+
+			if (found)// && !found2)
+			{
+				//cout << a << " - " << b << endl;
+				matching[a][matchingCount[a]] = b;
+				matchingCount[a]++;
+				foundA = true;
+
+				//iterated.push_back(b);
+				//iterated.push_back(a);
+			}
+		}
+
+		if (foundA) { foundCount++; }
+	}
+}
+
+void WavefrontUtils::computeAverageNormals(WavefrontObj* obj)
+{
+	computeVertexGroups(obj);
+
+	for (int a = 0; a < foundCount; a++)
+	{
+		Vector3D avgNormal(0, 0, 0);
+
+		vector <Vector3D> curNormals;
+
+		//Tgt vertex: Find all matching. NB: Some vertex indexes will have no matching!
+		int curMatching = matching[a][0];//Only look at one (Expand to all in the group later)
+		Vector3D tgtVertex(obj->vertices[curMatching].x, obj->vertices[curMatching].y, obj->vertices[curMatching].z);
+
+		//Compute the average for every face that contains the tgt vertex
+		for (int c = 0; c < obj->indicesCount; c += 3)//For every face
+		{
+			int i1 = obj->indices[c];
+			int i2 = obj->indices[c + 1];
+			int i3 = obj->indices[c + 2];
+
+			bool found = false;
+
+			if (obj->vertices[i1].x == tgtVertex.x && obj->vertices[i1].y == tgtVertex.y && obj->vertices[i1].z == tgtVertex.z)
+			{
+				found = true;
+			}
+
+			if (obj->vertices[i2].x == tgtVertex.x && obj->vertices[i2].y == tgtVertex.y && obj->vertices[i2].z == tgtVertex.z)
+			{
+				found = true;
+			}
+
+			if (obj->vertices[i3].x == tgtVertex.x && obj->vertices[i3].y == tgtVertex.y && obj->vertices[i3].z == tgtVertex.z)
+			{
+				found = true;
+			}
+
+			if (found == true)//All points have entries
+			{
+				Vector3D curNorm(obj->normals[i1].x, obj->normals[i1].y, obj->normals[i1].z);//Correct normal for this face
+				//cout << "found. Normal: [" << curNorm.x << " " << curNorm.y << " " << curNorm.z << "]" << endl;
+				curNormals.push_back(curNorm);
+			}
+		}
+
+		//[Remove duplicate normals for correct computation. Should be maximum 3 matches for each point.]
+		vector <Vector3D> uniqueNormals;
+
+		for (int a = 0; a < curNormals.size(); a++)
+		{
+			Vector3D curNormal(curNormals[a].x, curNormals[a].y, curNormals[a].z);
+			bool found = false;
+			for (int a = 0; a < uniqueNormals.size(); a++)
+			{
+				if (curNormal.x == uniqueNormals[a].x && curNormal.y == uniqueNormals[a].y && curNormal.z == uniqueNormals[a].z)
+				{
+					found = true;
+				}
+			}
+
+			if (!found) { uniqueNormals.push_back(curNormal); }
+		}
+
+		curNormals = uniqueNormals;
+
+		//[Average normal. Compute average for every face that contained the tgt vertex (prior block)]
+		for (int a = 0; a < curNormals.size(); a++)
+		{
+			avgNormal.x += curNormals[a].x;
+			avgNormal.y += curNormals[a].y;
+			avgNormal.z += curNormals[a].z;
+		}
+
+		avgNormal.x /= curNormals.size() - 1;
+		avgNormal.y /= curNormals.size() - 1;
+		avgNormal.z /= curNormals.size() - 1;
+		//cout << curNormals.size() << " normals found." << endl;
+		//cout << "Avg. Normal: [" << avgNormal.x << " " << avgNormal.y << " " << avgNormal.z << "]" << endl << endl;
+		//------------------------
+
+		//cout << "a:" << a << endl;
+
+		for (int b = 0; b < matchingCount[a]; b++)
+		{
+			int curInt = matching[a][b];
+			for (int b = 0; b < matchingCount[a]; b++)
+			{
+				averages[curInt] = avgNormal;
+			}
+		}
+	}
+}
+
+
 void WavefrontObj::extractFaceElements(string data, int *i1, int *i2, int *i3, int *i4, int *i5, int *i6, int *i7, int *i8, int *i9)//<--- Extract face data to the struct in a single pass
 {
 	unsigned short elementsInt[9];
@@ -30,9 +191,6 @@ void WavefrontObj::extractFaceElements(string data, int *i1, int *i2, int *i3, i
 	*i8 = elementsInt[7];
 	*i9 = elementsInt[8];
 }
-
-
-
 
 void WavefrontObj::extractFaceElementsQuad(string data, int *i1, int *i2, int *i3, int *i4, int *i5, int *i6, int *i7, int *i8, int *i9, int *i10, int *i11, int *i12)//<--- Extract face data to the struct in a single pass
 {
