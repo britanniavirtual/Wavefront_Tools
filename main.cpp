@@ -3,8 +3,9 @@
 #pragma comment(lib, "glew32.lib")
 
 const string MESH_FILE = "uvsphere.obj";
-const bool SHOW_NORMALS = true;
-const float NORMAL_WIDTH = 1;
+const bool SHOW_NORMALS = false;//Face normals
+const bool SHOW_AVERGE_NORMALS = true;//Show computed avg normals for each vertex
+const float NORMAL_WIDTH = 2;
 const float NORMAL_LENGTH = 0.1;
 const float POINT_SIZE = 10;
 const int WIDTH = 1024;
@@ -32,7 +33,6 @@ glm::vec3 Up(0, 1, 0);
 glm::vec3 Right(0, 1, 0);
 glm::vec3 viewDir(0, 1, 0);
 
-
 LARGE_INTEGER frequency;
 LARGE_INTEGER t1, t2;
 double frameTimeQP = 0;
@@ -41,7 +41,6 @@ float startTime = 0;
 float fps = 0;
 int totalFrames = 0;
 char info[MAX_PATH] = {0};
-
 
 float angle;
 float lx = 1;
@@ -55,27 +54,295 @@ float zz = 3;
 void drawCube(float x, float y, float z);
 //
 
-void drawNormals(Vector3D start, Vector3D end)
-{
-	glLineWidth(NORMAL_WIDTH);
+int matching[65536][16];
+int matchingCount[65536];
+int foundCount = 0;
+Vector3D averages[65536];//Computed Average for unique vertex
 
+//Triangles are defined by three unique points for simplicity of rendering (I.e. in DirectX) (Nothing shared)
+//Get the matching point arrays.
+void computeVertexGroups()
+{
+	//vector <int> iterated;//Dont add duplicates
+
+	for (int a = 0; a < objWireframeMesh.vertexCount; a++)//For every vertex
+	{
+		Vector3D curVertex1(objWireframeMesh.vertices[a].x, objWireframeMesh.vertices[a].y, objWireframeMesh.vertices[a].z);
+
+		bool foundA = false;
+		for (int b = 0; b < objWireframeMesh.vertexCount; b++)//Find matching
+		{
+			bool found = false;
+			//if (b == a) { continue; }
+			Vector3D curVertex2(objWireframeMesh.vertices[b].x, objWireframeMesh.vertices[b].y, objWireframeMesh.vertices[b].z);
+
+			if (curVertex1.x == curVertex2.x && curVertex1.y == curVertex2.y && curVertex1.z == curVertex2.z)
+			{
+				found = true;
+			}
+
+			/*
+			bool found2 = false;
+
+			for (int c = 0; c < iterated.size(); c++)
+			{
+				if (iterated[c] == b)
+				{
+					found2 = true;
+					break;
+				}
+			}
+			*/
+			
+			if (found)// && !found2)
+			{
+				//cout << a << " - " << b << endl;
+				matching[a][matchingCount[a]] = b;
+				matchingCount[a]++;
+				foundA = true;
+
+				//iterated.push_back(b);
+				//iterated.push_back(a);
+			}
+		}
+
+		if (foundA) { foundCount++; }
+	}
+}
+
+void computeAverageNormals()
+{
+	computeVertexGroups();
+
+	for (int a = 0; a < foundCount; a++)
+	{
+		Vector3D avgNormal(0,0,0);
+	
+		vector <Vector3D> curNormals;
+
+		//Tgt vertex: Find all matching. NB: Some vertex indexes will have no matching!
+		int curMatching = matching[a][0];//Only look at one (Expand to all in the group later)
+		Vector3D tgtVertex(objWireframeMesh.vertices[curMatching].x, objWireframeMesh.vertices[curMatching].y, objWireframeMesh.vertices[curMatching].z);
+
+		//Compute the average for every face that contains the tgt vertex
+		for (int c = 0; c < objWireframeMesh.indicesCount; c += 3)//For every face
+		{
+			int i1 = objWireframeMesh.indices[c];
+			int i2 = objWireframeMesh.indices[c + 1];
+			int i3 = objWireframeMesh.indices[c + 2];
+
+			bool found = false;
+
+			if (objWireframeMesh.vertices[i1].x == tgtVertex.x && objWireframeMesh.vertices[i1].y == tgtVertex.y && objWireframeMesh.vertices[i1].z == tgtVertex.z)
+			{
+				found = true;
+			}
+
+			if (objWireframeMesh.vertices[i2].x == tgtVertex.x && objWireframeMesh.vertices[i2].y == tgtVertex.y && objWireframeMesh.vertices[i2].z == tgtVertex.z)
+			{
+				found = true;
+			}
+
+			if (objWireframeMesh.vertices[i3].x == tgtVertex.x && objWireframeMesh.vertices[i3].y == tgtVertex.y && objWireframeMesh.vertices[i3].z == tgtVertex.z)
+			{
+				found = true;
+			}
+
+			if (found == true)//All points have entries
+			{
+				Vector3D curNorm(objWireframeMesh.normals[i1].x, objWireframeMesh.normals[i1].y, objWireframeMesh.normals[i1].z);//Correct normal for this face
+				//cout << "found. Normal: [" << curNorm.x << " " << curNorm.y << " " << curNorm.z << "]" << endl;
+				curNormals.push_back(curNorm);
+			}
+		}
+
+		//[Remove duplicate normals for correct computation. Should be maximum 3 matches for each point.]
+		vector <Vector3D> uniqueNormals;
+		
+		for (int a = 0; a < curNormals.size(); a++)
+		{
+			Vector3D curNormal(curNormals[a].x, curNormals[a].y, curNormals[a].z);
+			bool found = false;
+			for (int a = 0; a < uniqueNormals.size(); a++)
+			{
+				if (curNormal.x == uniqueNormals[a].x && curNormal.y == uniqueNormals[a].y && curNormal.z == uniqueNormals[a].z)
+				{
+					found = true;
+				}
+			}
+
+			if (!found) { uniqueNormals.push_back(curNormal); }
+		}
+
+		curNormals = uniqueNormals;
+
+		//[Average normal. Compute average for every face that contained the tgt vertex (prior block)]
+		for (int a = 0; a < curNormals.size(); a++)
+		{
+			avgNormal.x += curNormals[a].x;
+			avgNormal.y += curNormals[a].y;
+			avgNormal.z += curNormals[a].z;
+		}
+
+		avgNormal.x /= curNormals.size() - 1;
+		avgNormal.y /= curNormals.size() - 1;
+		avgNormal.z /= curNormals.size() - 1;
+		//cout << curNormals.size() << " normals found." << endl;
+		//cout << "Avg. Normal: [" << avgNormal.x << " " << avgNormal.y << " " << avgNormal.z << "]" << endl << endl;
+		//------------------------
+
+		//cout << "a:" << a << endl;
+
+		for (int b = 0; b < matchingCount[a]; b++)
+		{
+			int curInt = matching[a][b];
+	
+			//cout << "pair:" << curInt << endl;// " [" << avgNormal[a].x << "," << avgNormal[a].y << "," << avgNormal[a].z << "]" << endl;
+
+			for (int b = 0; b < matchingCount[a]; b++)
+			{
+				averages[curInt] = avgNormal;
+			}
+		}
+	}
+}
+
+
+Vector3D computeCentroid()
+{
+	Vector3D centroid(0, 0, 0);
+
+	float avgX = 0;
+	float avgY = 0;
+	float avgZ = 0;
+
+	int n = 0;
+
+	//[Get collision mesh triangles]
+	for (int c = 0; c < objWireframeMesh.indicesCount; c += 3)
+	{
+		int i1 = objWireframeMesh.indices[c];
+		int i2 = objWireframeMesh.indices[c + 1];
+		int i3 = objWireframeMesh.indices[c + 2];
+
+		//[CM verts]
+		avgX += objWireframeMesh.vertices[i1].x;
+		avgY += objWireframeMesh.vertices[i1].y;
+		avgZ += objWireframeMesh.vertices[i1].z;
+
+		avgX += objWireframeMesh.vertices[i2].x;
+		avgY += objWireframeMesh.vertices[i2].y;
+		avgZ += objWireframeMesh.vertices[i2].z;
+
+		avgX += objWireframeMesh.vertices[i3].x;
+		avgY += objWireframeMesh.vertices[i3].y;
+		avgZ += objWireframeMesh.vertices[i3].z;
+
+		n += 3;
+	}
+
+	centroid.x = avgX / n;
+	centroid.y = avgY / n;
+	centroid.z = avgZ / n;
+
+	return centroid;
+}
+
+/*
+void expand(float amount)
+{
+	//Record which vertex refs share the same position (Move all groups the same amount)
+
+	computeVertexGroups();
+
+	Vector3D centroid = computeCentroid();
+
+	for (int a = 0; a < foundCount; a++)
+	{
+		//cout << "Matching: " << matchingCount[a] << endl;
+		for (int b = 0; b < matchingCount[a]; b++)
+		{
+			int curIndex = matching[a][b];
+
+			Vector3D faceNorm(objWireframeMesh.normals[a].x, objWireframeMesh.normals[a].y, objWireframeMesh.normals[a].z);
+			faceNorm = vector3DUtils.setVectorMagnitude(faceNorm, amount);
+
+			//Vector3D vec1(objWireframeMesh.vertices[a].x, objWireframeMesh.vertices[a].y, objWireframeMesh.vertices[a].z);
+			//Vector3D newVecN = vector3DUtils.displaceVectorTowards(vec1, vec1+faceNorm, -1.01);
+			//Vector3D newVec = vector3DUtils.displaceVectorTowards(centroid, vec1, 2.50);
+
+			objWireframeMesh.vertices[curIndex].x += faceNorm.x;
+			objWireframeMesh.vertices[curIndex].y += faceNorm.y;
+			objWireframeMesh.vertices[curIndex].z += faceNorm.z;
+		}
+	}
+}
+*/
+
+void drawAvgNormals()
+{
+		glColor3f(0.5f, 0.5f, 0.5f);
+		glLineWidth(NORMAL_WIDTH);
+		glBegin(GL_LINES);
+		for (int a = 0; a < objWireframeMesh.vertexCount; a++)
+		{
+			//glVertex3f(objWireframeMesh.vertices[i1].x, objWireframeMesh.vertices[i1].y, objWireframeMesh.vertices[i1].z);
+
+			averages[a] = vector3DUtils.setVectorMagnitude(averages[a], NORMAL_LENGTH);
+			
+			glVertex3f(objWireframeMesh.vertices[a].x, objWireframeMesh.vertices[a].y, objWireframeMesh.vertices[a].z);
+			glVertex3f(objWireframeMesh.vertices[a].x + averages[a].x, objWireframeMesh.vertices[a].y + averages[a].y, objWireframeMesh.vertices[a].z + averages[a].z);
+		}
+		glEnd();
+		glLineWidth(1);
+}
+
+
+void drawNormals()
+{
+	glColor3f(0.5f, 0.5f, 0.5f);
+
+	glLineWidth(NORMAL_WIDTH);
 	for (int a = 0; a < objWireframeMesh.indicesCount; a += 3)
 	{
+
 		int i1 = objWireframeMesh.indices[a];
 		int i2 = objWireframeMesh.indices[a + 1];
 		int i3 = objWireframeMesh.indices[a + 2];
 
-		Vector3D faceNorm(objWireframeMesh.normals[a].x, objWireframeMesh.normals[a].y, objWireframeMesh.normals[a].z);
-		faceNorm = vector3DUtils.setVectorMagnitude(faceNorm, NORMAL_LENGTH);
+		Vector3D tgtVertex(objWireframeMesh.vertices[i1].x, objWireframeMesh.vertices[i1].y, objWireframeMesh.vertices[i1].z);
 
-		Vector3D centroid((objWireframeMesh.vertices[i1].x + objWireframeMesh.vertices[i2].x + objWireframeMesh.vertices[i3].x) / 3, (objWireframeMesh.vertices[i1].y + objWireframeMesh.vertices[i2].y + objWireframeMesh.vertices[i3].y) / 3, (objWireframeMesh.vertices[i1].z + objWireframeMesh.vertices[i2].z + objWireframeMesh.vertices[i3].z) / 3);
+		bool found = false;
 
-		glBegin(GL_LINES);
-		//glVertex3f(objWireframeMesh.vertices[i1].x, objWireframeMesh.vertices[i1].y, objWireframeMesh.vertices[i1].z);
-		glVertex3f(centroid.x, centroid.y, centroid.z);
-		glVertex3f(centroid.x + faceNorm.x, centroid.y + faceNorm.y, centroid.z + faceNorm.z);
-		glEnd();
+		if (objWireframeMesh.vertices[i1].x == tgtVertex.x && objWireframeMesh.vertices[i1].y == tgtVertex.y && objWireframeMesh.vertices[i1].z == tgtVertex.z)
+		{
+			found = true;
+		}
+
+		if (objWireframeMesh.vertices[i2].x == tgtVertex.x && objWireframeMesh.vertices[i2].y == tgtVertex.y && objWireframeMesh.vertices[i2].z == tgtVertex.z)
+		{
+			found = true;
+		}
+
+		if (objWireframeMesh.vertices[i3].x == tgtVertex.x && objWireframeMesh.vertices[i3].y == tgtVertex.y && objWireframeMesh.vertices[i3].z == tgtVertex.z)
+		{
+			found = true;
+		}
+
+		if (found)
+		{
+			Vector3D faceNorm(objWireframeMesh.normals[a].x, objWireframeMesh.normals[a].y, objWireframeMesh.normals[a].z);
+			faceNorm = vector3DUtils.setVectorMagnitude(faceNorm, NORMAL_LENGTH);
+
+			Vector3D centroid((objWireframeMesh.vertices[i1].x + objWireframeMesh.vertices[i2].x + objWireframeMesh.vertices[i3].x) / 3, (objWireframeMesh.vertices[i1].y + objWireframeMesh.vertices[i2].y + objWireframeMesh.vertices[i3].y) / 3, (objWireframeMesh.vertices[i1].z + objWireframeMesh.vertices[i2].z + objWireframeMesh.vertices[i3].z) / 3);
+
+			glBegin(GL_LINES);
+			glVertex3f(centroid.x, centroid.y, centroid.z);
+			glVertex3f(centroid.x + faceNorm.x, centroid.y + faceNorm.y, centroid.z + faceNorm.z);
+			glEnd();
+		}
 	}
+
 	glLineWidth(1);
 }
 
@@ -109,7 +376,6 @@ void processSpecialKeys(int key, int x, int y)
 	}
 }
 
-
 void keyDown(unsigned char key, int x, int y)
 {
 	
@@ -130,7 +396,6 @@ void keyDown(unsigned char key, int x, int y)
 		zz += m_moveCommand * (cosf(m_yaw) - m_moveCommand * sinf(m_yaw)) / 2;
 		xx -= m_moveCommand * (sinf(m_yaw) + m_moveCommand * cosf(m_yaw)) / 2;
 	}
-
 
 	if (key == 'a')
 	{
@@ -286,11 +551,6 @@ void drawWavefrontGeo()
 	glEnd();
 }
 
-
-//////////////
-//Draw cube
-//////////////
-
 GLfloat color[8][3] =
 {
 	{0.0,0.0,0.0},
@@ -378,7 +638,6 @@ void drawCube(float x, float y, float z)
 	quad(0, 1, 5, 4, x, y, z);
 }
 
-
 void drawGrid()
 {
 	glBegin(GL_LINES);
@@ -433,9 +692,7 @@ void onReshape(int nw, int nh)
 	viewDir.y = (float)-MV[6];
 	viewDir.z = (float)-MV[10];
 	Right = glm::cross(viewDir, Up);
-
 }
-
 
 
 void onRender()
@@ -493,14 +750,12 @@ void onRender()
 	viewDir.z = (float)-MV[10];
 	Right = glm::cross(viewDir, Up);
 
-	// Set the camera
-	gluLookAt(xx, yy, zz, // Camera position
-		xx + lx, yy, zz + lz,  // Look at point
-		0.0f, 1.0f, 0.0f); // Up vector
-
+	//Set the camera
+	gluLookAt(xx, yy, zz, //Camera position
+		xx + lx, yy, zz + lz, //Look at point
+		0.0f, 1.0f, 0.0f); //Up vector
 
 	//[Draw world grid]
-
 	if (SHOW_GRID)
 	{
 		drawGrid();
@@ -508,16 +763,19 @@ void onRender()
 
 	if (SHOW_NORMALS)
 	{
-		drawNormals(Vector3D(0, 0, 0), Vector3D(0, 0, 0));
+		drawNormals();
+	}
+
+	if (SHOW_AVERGE_NORMALS)
+	{
+		drawAvgNormals();
 	}
 
 	//[Draw wavefront geometry]
 	drawWavefrontGeoPoints();
 	drawWavefrontGeo();
-
 	drawMeshVertexRef();
 
-	//glEnd();
 	glutSwapBuffers();
 }
 
@@ -535,6 +793,8 @@ void onIdle()
 void main(int argc, char** argv)
 {
 	objWireframeMesh.loadObj(MESH_FILE);
+	//expand(1.5);
+	computeAverageNormals();
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);

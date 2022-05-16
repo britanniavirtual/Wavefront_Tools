@@ -143,5 +143,7 @@ public:
 	double length(Vector3D vec);
 
 	Vector3D normalize(Vector3D vec);
+
+	Vector3D displaceVectorTowards(Vector3D a, Vector3D b, float amount);
 };
 

@@ -27,6 +27,39 @@ Vector3D Vector3DUtils::cross(const Vector3D& A, const Vector3D& B)
 
 
 
+Vector3D Vector3DUtils::displaceVectorTowards(Vector3D a, Vector3D b, float amount)
+{
+	if (utils.dist(a.x, a.y, a.z, b.x, b.y, b.z) <= 0.0)
+	{
+		//Vector3D op4(256, 256, 256);
+		return(a);
+	}
+
+	Vector3D op0(0, 0, 0);
+
+	//[End-Start]
+	op0.x = b.x - a.x;
+	op0.y = b.y - a.y;
+	op0.z = b.z - a.z;
+
+	Vector3D op1(op0.x, op0.y, op0.z);
+	Vector3D vi(op1.x, op1.y, op1.z);
+	float vLen0 = length(vi);
+	float vLen1 = 1 / vLen0;//Amount to scale to increase by 1
+
+	Vector3D op3(op1.x, op1.y, op1.z);
+	op3 *= vLen1 * amount;
+
+	Vector3D op2(0, 0, 0);
+	op2.x = a.x + op3.x;
+	op2.y = a.y + op3.y;
+	op2.z = a.z + op3.z;
+
+	return(op2);
+}
+
+
+
 double Vector3DUtils::dot(Vector3D input1, const Vector3D& input2)
 {
 	return input1.x * input2.x + input1.y * input2.y + input1.z * input2.z;
