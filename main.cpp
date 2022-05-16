@@ -13,6 +13,7 @@ const int HEIGHT = 1024;
 const int GRID_SIZE = 5;
 const float TIME_STEP =  1/60.0f;
 const bool SHOW_GRID = true;
+const bool SHOW_VERTEX_REFS = true;
 
 float currentTime = 0;
 double accumulator = TIME_STEP;
@@ -59,7 +60,7 @@ int matchingCount[65536];
 int foundCount = 0;
 Vector3D averages[65536];//Computed Average for unique vertex
 
-//Triangles are defined by three unique points for simplicity of rendering (I.e. in DirectX) (Nothing shared)
+//Triangles are defined by three unique points for simplicity of rendering (I.e. in DirectX) (No points shared between polys)
 //Get the matching point arrays.
 void computeVertexGroups()
 {
@@ -196,9 +197,6 @@ void computeAverageNormals()
 		for (int b = 0; b < matchingCount[a]; b++)
 		{
 			int curInt = matching[a][b];
-	
-			//cout << "pair:" << curInt << endl;// " [" << avgNormal[a].x << "," << avgNormal[a].y << "," << avgNormal[a].z << "]" << endl;
-
 			for (int b = 0; b < matchingCount[a]; b++)
 			{
 				averages[curInt] = avgNormal;
@@ -248,53 +246,35 @@ Vector3D computeCentroid()
 	return centroid;
 }
 
-/*
-void expand(float amount)
+
+void meshExpand(float amount)
 {
-	//Record which vertex refs share the same position (Move all groups the same amount)
-
-	computeVertexGroups();
-
-	Vector3D centroid = computeCentroid();
-
-	for (int a = 0; a < foundCount; a++)
+	for (int a = 0; a < objWireframeMesh.vertexCount; a++)
 	{
-		//cout << "Matching: " << matchingCount[a] << endl;
-		for (int b = 0; b < matchingCount[a]; b++)
-		{
-			int curIndex = matching[a][b];
+		Vector3D expand(averages[a].x,  averages[a].y, averages[a].z);
+		expand = vector3DUtils.setVectorMagnitude(expand, amount);
 
-			Vector3D faceNorm(objWireframeMesh.normals[a].x, objWireframeMesh.normals[a].y, objWireframeMesh.normals[a].z);
-			faceNorm = vector3DUtils.setVectorMagnitude(faceNorm, amount);
-
-			//Vector3D vec1(objWireframeMesh.vertices[a].x, objWireframeMesh.vertices[a].y, objWireframeMesh.vertices[a].z);
-			//Vector3D newVecN = vector3DUtils.displaceVectorTowards(vec1, vec1+faceNorm, -1.01);
-			//Vector3D newVec = vector3DUtils.displaceVectorTowards(centroid, vec1, 2.50);
-
-			objWireframeMesh.vertices[curIndex].x += faceNorm.x;
-			objWireframeMesh.vertices[curIndex].y += faceNorm.y;
-			objWireframeMesh.vertices[curIndex].z += faceNorm.z;
-		}
+		objWireframeMesh.vertices[a].x += expand.x;
+		objWireframeMesh.vertices[a].y += expand.y;
+		objWireframeMesh.vertices[a].z += expand.z;
 	}
 }
-*/
+
 
 void drawAvgNormals()
 {
-		glColor3f(0.5f, 0.5f, 0.5f);
-		glLineWidth(NORMAL_WIDTH);
-		glBegin(GL_LINES);
-		for (int a = 0; a < objWireframeMesh.vertexCount; a++)
-		{
-			//glVertex3f(objWireframeMesh.vertices[i1].x, objWireframeMesh.vertices[i1].y, objWireframeMesh.vertices[i1].z);
-
-			averages[a] = vector3DUtils.setVectorMagnitude(averages[a], NORMAL_LENGTH);
+	glColor3f(0.5f, 0.5f, 0.5f);
+	glLineWidth(NORMAL_WIDTH);
+	glBegin(GL_LINES);
+	for (int a = 0; a < objWireframeMesh.vertexCount; a++)
+	{
+		averages[a] = vector3DUtils.setVectorMagnitude(averages[a], NORMAL_LENGTH);
 			
-			glVertex3f(objWireframeMesh.vertices[a].x, objWireframeMesh.vertices[a].y, objWireframeMesh.vertices[a].z);
-			glVertex3f(objWireframeMesh.vertices[a].x + averages[a].x, objWireframeMesh.vertices[a].y + averages[a].y, objWireframeMesh.vertices[a].z + averages[a].z);
-		}
-		glEnd();
-		glLineWidth(1);
+		glVertex3f(objWireframeMesh.vertices[a].x, objWireframeMesh.vertices[a].y, objWireframeMesh.vertices[a].z);
+		glVertex3f(objWireframeMesh.vertices[a].x + averages[a].x, objWireframeMesh.vertices[a].y + averages[a].y, objWireframeMesh.vertices[a].z + averages[a].z);
+	}
+	glEnd();
+	glLineWidth(1);
 }
 
 
@@ -490,7 +470,9 @@ void onMouseMove(int x, int y)
 
 void drawMeshVertexRef()
 {
-	//Draw vertex point references
+	if (!SHOW_VERTEX_REFS) { return; }
+
+	//Draw original vertex point references
 	glColor3f(1, 0, 0);
 	for (int a = 0; a < objWireframeMesh.originalVertexCount; a++)
 	{
@@ -793,8 +775,8 @@ void onIdle()
 void main(int argc, char** argv)
 {
 	objWireframeMesh.loadObj(MESH_FILE);
-	//expand(1.5);
 	computeAverageNormals();
+	//meshExpand(0.5);//Expand loaded mesh outwards along the average normals similar to Blender's solidify modifier
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
