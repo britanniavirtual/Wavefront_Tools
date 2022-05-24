@@ -6,7 +6,7 @@ void WavefrontUtils::expandMesh(WavefrontObj *obj, float amount)
 
 	for (int a = 0; a < obj->vertexCount; a++)
 	{
-		Vector3D expand(averages[a].x, averages[a].y, averages[a].z);
+		Vector3D expand(averageNormals[a].x, averageNormals[a].y, averageNormals[a].z);
 		expand = vector3DUtils.setVectorMagnitude(expand, amount);
 
 		obj->vertices[a].x += expand.x;
@@ -143,18 +143,13 @@ void WavefrontUtils::computeAverageNormals(WavefrontObj* obj)
 		avgNormal.x /= curNormals.size() - 1;
 		avgNormal.y /= curNormals.size() - 1;
 		avgNormal.z /= curNormals.size() - 1;
-		//cout << curNormals.size() << " normals found." << endl;
-		//cout << "Avg. Normal: [" << avgNormal.x << " " << avgNormal.y << " " << avgNormal.z << "]" << endl << endl;
-		//------------------------
-
-		//cout << "a:" << a << endl;
 
 		for (int b = 0; b < matchingCount[a]; b++)
 		{
 			int curInt = matching[a][b];
 			for (int b = 0; b < matchingCount[a]; b++)
 			{
-				averages[curInt] = avgNormal;
+				averageNormals[curInt] = avgNormal;
 			}
 		}
 	}
@@ -399,9 +394,26 @@ void WavefrontObj::writeObj(string fileName)
 
 	data << endl;
 
-	for (int a = 0; a < vertexCount; a+=3)
+	for (int a = 0; a < uvCount; a++)
 	{
-		data << " f " << a+1 << " " << a+2 << " " << a+3 << endl;
+		data << " vt " << uvs[a].y << " " << uvs[a].x << endl;
+	}
+
+	data << endl;
+
+	if (vertexCount != uvCount)
+	{
+		for (int a = 0; a < vertexCount; a += 3)
+		{
+			data << " f " << a + 1 << " " << a + 2 << " " << a + 3 << endl;
+		}
+	}
+	else
+	{
+		for (int a = 0; a < vertexCount; a += 3)
+		{
+			data << " f " << a + 1 << "/" << a + 1 << " " << a + 2 << "/" << a + 2 << " " << a + 3 << "/" << a + 3 << endl;
+		}
 	}
 
 	ofstream myfile;
@@ -722,7 +734,7 @@ void WavefrontObj::loadObj(string fileName)
 			vertStr += data[i];
 		}
 
-		/*
+		
 		//[(2) Read vt list]
 		//NB: Compute the vt strings first, update the floats in the model object when computing the faces
 
@@ -748,7 +760,7 @@ void WavefrontObj::loadObj(string fileName)
 		{
 			vtStrings[curVt] += data[i];
 		}
-		*/
+		
 
 		//[(3) Read vn list]
 
@@ -829,13 +841,9 @@ void WavefrontObj::loadObj(string fileName)
 		originalIndices[a][7] = i8 - 1;
 		originalIndices[a][8] = i9 - 1;
 
-		//cout << i1 << " " << i4 << " " << i7 << endl;
-		//system("PAUSE");
-
 		originalIndicesCount++;
 
-		//Vertices
-		//This is affected by the preceding statements
+		//[Vertices]
 		VEC3 curVert1 = curVerts[i1 - 1];
 		VEC3 curVert2 = curVerts[i4 - 1];
 		VEC3 curVert3 = curVerts[i7 - 1];
@@ -845,7 +853,6 @@ void WavefrontObj::loadObj(string fileName)
 		vertices[vertexCount].x = curVert1.x;
 		vertices[vertexCount].y = curVert1.y;
 		vertices[vertexCount].z = curVert1.z;
-
 		vertexCount++;
 
 		vertices[vertexCount].x = curVert2.x;
@@ -866,7 +873,7 @@ void WavefrontObj::loadObj(string fileName)
 		uvs[uvCount].x = uv1.y;
 		uvs[uvCount].y = uv1.x;
 		uvCount++;
-
+		
 		uvs[uvCount].x = uv2.y;
 		uvs[uvCount].y = uv2.x;
 		uvCount++;
@@ -874,6 +881,7 @@ void WavefrontObj::loadObj(string fileName)
 		uvs[uvCount].x = uv3.y;
 		uvs[uvCount].y = uv3.x;
 		uvCount++;
+		
 
 		//[Normals]
 		VEC3 curNormal1 = curVns[i3 - 1];

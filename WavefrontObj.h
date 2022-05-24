@@ -2,6 +2,13 @@
 
 #define MAXINDEX 100000
 
+class VEC2
+{
+public:
+	float x;
+	float y;
+};
+
 class VEC3
 {
 public:
@@ -18,14 +25,6 @@ public:
 	float z;
 	float w;
 };
-
-class VEC2
-{
-public:
-	float x;
-	float y;
-};
-
 
 class WavefrontObj
 {
@@ -170,5 +169,5 @@ private:
 	int matching[16384][16];
 	int matchingCount[16384];
 	int foundCount = 0;
-	Vector3D averages[16384];//Computed Average for unique vertex
+	Vector3D averageNormals[16384];//Computed Average for unique vertex
 };

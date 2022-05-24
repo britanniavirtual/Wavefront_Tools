@@ -2,7 +2,7 @@
 
 #pragma comment(lib, "glew32.lib")
 
-const string MESH_FILE = "uvsphere.obj";
+const string MESH_FILE = "cylinder.obj";
 const bool SHOW_NORMALS = false;//Face normals
 const bool SHOW_AVERGE_NORMALS = true;//Show computed avg normals for each vertex
 const float NORMAL_WIDTH = 2;
@@ -781,7 +781,7 @@ void main(int argc, char** argv)
 	glutCloseFunc(onShutdown);
 
 	glewInit();
-	initGL();//<-- Wireframe mode set
+	initGL();//<-- Wireframe mode set et al
 
 	glutMainLoop();
 }
