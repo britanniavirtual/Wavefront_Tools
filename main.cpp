@@ -4,7 +4,7 @@
 
 const string MESH_FILE = "cylinder.obj";
 const bool SHOW_NORMALS = false;//Face normals
-const bool SHOW_AVERGE_NORMALS = true;//Show computed avg normals for each vertex
+const bool SHOW_AVERAGE_NORMALS = true;//Show computed avg normals for each vertex
 const float NORMAL_WIDTH = 2;
 const float NORMAL_LENGTH = 0.1;
 const float POINT_SIZE = 10;
@@ -734,7 +734,7 @@ void onRender()
 		drawNormals();
 	}
 
-	if (SHOW_AVERGE_NORMALS)
+	if (SHOW_AVERAGE_NORMALS)
 	{
 		drawAvgNormals();
 	}
