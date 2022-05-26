@@ -267,10 +267,6 @@ VEC2 WavefrontObj::extractUVs(string data)
 	uvOut.x = atof(vertexStr[0].c_str());
 	uvOut.y = atof(vertexStr[1].c_str());
 
-	//VEC2 uvOut;
-	//uvOut.x = 1;
-	//uvOut.y = 1;
-
 	return uvOut;
 }
 
@@ -582,8 +578,6 @@ void WavefrontObj::loadQuadObj(string fileName)
 
 		originalIndicesQuadCount++;
 
-		//Vertices
-		//This is affected by the preceding statements
 		VEC3 curVert1 = curVerts[i1 - 1];
 		VEC3 curVert2 = curVerts[i4 - 1];
 		VEC3 curVert3 = curVerts[i7 - 1];

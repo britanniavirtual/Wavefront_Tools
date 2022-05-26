@@ -111,7 +111,7 @@ void computeVertexGroups()
 	}
 }
 
-void comptueNormalAverages()
+void computeNormalAverages()
 {
 	computeVertexGroups();
 
@@ -152,7 +152,6 @@ void comptueNormalAverages()
 			if (found == true)//All points have entries
 			{
 				Vector3D curNorm(objWireframeMesh.normals[i1].x, objWireframeMesh.normals[i1].y, objWireframeMesh.normals[i1].z);//Correct normal for this face
-				//cout << "found. Normal: [" << curNorm.x << " " << curNorm.y << " " << curNorm.z << "]" << endl;
 				curNormals.push_back(curNorm);
 			}
 		}
@@ -625,10 +624,10 @@ void initGL()
 	startTime = (float)glutGet(GLUT_ELAPSED_TIME);
 	currentTime = startTime;
 
-	//get ticks per second
+	//Get ticks per second
     QueryPerformanceFrequency(&frequency);
 
-    //start timer
+    //Start timer
     QueryPerformanceCounter(&t1);
 
 	glEnable(GL_DEPTH_TEST);
@@ -723,7 +722,7 @@ void onRender()
 		xx + lx, yy, zz + lz, //Look at point
 		0.0f, 1.0f, 0.0f); //Up vector
 
-	//[Draw world grid]
+	//Draw world grid
 	if (SHOW_GRID)
 	{
 		drawGrid();
@@ -762,7 +761,7 @@ void main(int argc, char** argv)
 {
 	objWireframeMesh.loadObj(MESH_FILE);
 
-	comptueNormalAverages();
+	computeNormalAverages();
 
 	//wavefrontUtils.expandMesh(&objWireframeMesh, 2);
 

@@ -16,7 +16,6 @@ using namespace std;
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-#include "Console.h"
 #include "Utils.h"
 #include "VectorUtilities.h"
 #include "WavefrontObj.h"

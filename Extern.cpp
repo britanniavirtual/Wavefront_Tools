@@ -5,4 +5,3 @@ WavefrontUtils wavefrontUtils;
 
 WavefrontObj objWireframeMesh;
 Utils utils;
-Console console;
